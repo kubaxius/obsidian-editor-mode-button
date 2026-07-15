@@ -8,12 +8,18 @@
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedIndexedAccess": true,
-		"moduleResolution": "node",
 		"isolatedModules": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"allowSyntheticDefaultImports": true,
-		"lib": ["ES2021", "DOM"]
+		"lib": ["ES2021", "DOM"],
+		"paths": {
+			"@src/*": ["./src/*"],
+			"@domain/*": ["./src/domain/*"],
+			"@obsidian/*": ["./src/obsidian/*"],
+			"@storage/*": ["./src/storage/*"],
+			"@ui/*": ["./src/ui/*"]
+		}
 	},
 	"include": ["src/**/*.ts"]
 }
