@@ -1,12 +1,13 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
-import EMBPlugin from './main';
+import EMBPlugin from '@src/main';
+import { mode } from '@src/types';
 
 export interface EMBSettings {
-	mySetting: string;
+	defaultMode: mode;
 }
 
 export const DEFAULT_SETTINGS: EMBSettings = {
-	mySetting: 'default',
+	defaultMode: 'editor',
 };
 
 export class EMBSettingTab extends PluginSettingTab {
@@ -23,14 +24,15 @@ export class EMBSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Settings #1')
-			.setDesc("It's a secret")
-			.addText((text) =>
-				text
-					.setPlaceholder('Enter your secret')
-					.setValue(this.plugin.settings.mySetting)
+			.setName('Default Editor Mode')
+			.setDesc('Set the default editor mode')
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption('editor', 'Editor')
+					.addOption('preview', 'Preview')
+					.setValue(this.plugin.settings.defaultMode)
 					.onChange(async (value) => {
-						this.plugin.settings.mySetting = value;
+						this.plugin.settings.defaultMode = value as mode;
 						await this.plugin.saveSettings();
 					}),
 			);
