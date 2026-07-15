@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "editor-mode-button",
+	"name": "Editor Mode Button",
 	"version": "1.0.0",
 	"minAppVersion": "1.0.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Adds a button to toggle editor mode.",
+	"author": "Kubaxius",
+	"authorUrl": "",
+	"fundingUrl": "",
 	"isDesktopOnly": false
 }
