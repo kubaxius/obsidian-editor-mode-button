@@ -41,10 +41,12 @@ export default class EMBPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// Watch for changes in obsidian settings.
-		this.registerEvent(
-			this.obsidianSettings.onChange(this.onObsidianSettingsChange),
-		);
+			// Watch for changes in obsidian settings.
+			this.registerEvent(
+				this.obsidianSettings.onChange((change) => {
+					this.onObsidianSettingsChange(change);
+				}),
+			);
 		this.obsidianSettings.watch(this);
 
 		// Change default mode when the layout finishes loading.
