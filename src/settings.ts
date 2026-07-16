@@ -24,7 +24,7 @@ export class EMBSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Default Editor Mode')
+			.setName('Default editor mode')
 			.setDesc('Set the default editor mode')
 			.addDropdown((dropdown) =>
 				dropdown
