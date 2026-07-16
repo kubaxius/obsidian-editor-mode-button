@@ -9,7 +9,7 @@ import {
 import {
 	cycleMode,
 	editorMode,
-	applyModeToOpenMarkdownViews,
+	applyModeToOpenViews,
 	isEditorMode,
 	setMode,
 } from './editor-mode';
@@ -30,7 +30,7 @@ export default class EMBPlugin extends Plugin {
 		this.mode = mode;
 		this.updateRibbonIcon();
 		this.modeStyles.setMode(this.mode);
-		await applyModeToOpenMarkdownViews(this.mode, this.app);
+		await applyModeToOpenViews(this.mode, this.app);
 	}
 
 	/* STARTUP AND UNLOAD */

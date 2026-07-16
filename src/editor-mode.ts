@@ -1,4 +1,4 @@
-import { App, MarkdownView } from 'obsidian';
+import { App, View } from 'obsidian';
 import { ObsidianSettings } from './settings';
 
 export type editorMode = 'preview' | 'source';
@@ -30,29 +30,62 @@ export async function cycleMode(obsidianSettings: ObsidianSettings) {
 	});
 }
 
-export async function applyModeToOpenMarkdownViews(
+type ModeAwareView = View & {
+	getMode(): unknown;
+};
+
+function hasModeGetter(view: View): view is ModeAwareView {
+	return (
+		'getMode' in view &&
+		typeof (view as Partial<ModeAwareView>).getMode === 'function'
+	);
+}
+
+function getModeFromView(view: View): editorMode | null {
+	if (hasModeGetter(view)) {
+		const mode = view.getMode();
+
+		if (isEditorMode(mode)) {
+			return mode;
+		}
+	}
+
+	const mode = view.getState().mode;
+
+	if (isEditorMode(mode)) {
+		return mode;
+	}
+
+	return null;
+}
+
+export async function applyModeToOpenViews(
 	mode: editorMode,
 	app: App,
 ): Promise<void> {
-	const leaves = app.workspace.getLeavesOfType('markdown');
+	const updates: Promise<void>[] = [];
 
-	await Promise.all(
-		leaves.map(async (leaf) => {
-			if (leaf.isDeferred || !(leaf.view instanceof MarkdownView)) {
-				return;
-			}
+	app.workspace.iterateAllLeaves((leaf) => {
+		if (leaf.isDeferred) {
+			return;
+		}
 
-			if (leaf.view.getMode() === mode) {
-				return;
-			}
+		const currentMode = getModeFromView(leaf.view);
 
-			await leaf.view.setState(
+		if (!currentMode || currentMode === mode) {
+			return;
+		}
+
+		updates.push(
+			leaf.view.setState(
 				{
 					...leaf.view.getState(),
 					mode,
 				},
 				{ history: false },
-			);
-		}),
-	);
+			),
+		);
+	});
+
+	await Promise.all(updates);
 }
