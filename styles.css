@@ -1,8 +1,7 @@
-/*
+body.emb-mode-source .view-header {
+	background-color: rgb(45, 25, 0) !important;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
+body.emb-mode-preview .view-header {
+	background-color: var(--background-secondary);
+}

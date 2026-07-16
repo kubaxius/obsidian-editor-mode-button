@@ -15,6 +15,11 @@ import {
 } from './editor-mode';
 
 export default class EMBPlugin extends Plugin {
+	private static readonly MODE_CLASSES = [
+		'emb-mode-preview',
+		'emb-mode-source',
+	];
+
 	settings!: EMBSettings;
 	obsidianSettings = new ObsidianSettings(this.app);
 	ribbonButton?: HTMLElement;
@@ -27,6 +32,7 @@ export default class EMBPlugin extends Plugin {
 	private async modeChanged(mode: editorMode) {
 		this.mode = mode;
 		this.updateRibbonIcon();
+		this.updateModeClass();
 		await applyModeToOpenMarkdownViews(this.mode, this.app);
 	}
 
@@ -70,7 +76,9 @@ export default class EMBPlugin extends Plugin {
 		this.addSettingTab(new EMBSettingTab(this.app, this));
 	}
 
-	onunload() {}
+	onunload() {
+		this.clearModeClasses();
+	}
 
 	/* SETTINGS */
 
@@ -114,6 +122,15 @@ export default class EMBPlugin extends Plugin {
 			this.ribbonButton,
 			this.mode === 'source' ? 'pencil' : 'book-open',
 		);
+	}
+
+	private updateModeClass() {
+		this.clearModeClasses();
+		document.body.classList.add(`emb-mode-${this.mode}`);
+	}
+
+	private clearModeClasses() {
+		document.body.classList.remove(...EMBPlugin.MODE_CLASSES);
 	}
 
 	private async onRibbonIconPress(): Promise<void> {
