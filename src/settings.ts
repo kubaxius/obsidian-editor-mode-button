@@ -41,6 +41,21 @@ export class EMBSettingTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
+	getSettingDefinitions() {
+		return [
+			{
+				name: 'Editor mode on startup',
+				desc: 'Set the default editor mode that is set on Obsidian Startup',
+				control: {
+					type: 'dropdown',
+					key: 'startupMode',
+					defaultValue: 'preview',
+					options: { preview: 'Preview', source: 'Source' },
+				},
+			},
+		];
+	}
+
 	display(): void {
 		const { containerEl } = this;
 
@@ -49,7 +64,7 @@ export class EMBSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName('Editor mode on startup')
 			.setDesc(
-				'Set the default editor mode that is set on Obsidian Startup',
+				'Set the default editor mode that is set on Obsidian startup',
 			)
 			.addDropdown((dropdown) =>
 				dropdown

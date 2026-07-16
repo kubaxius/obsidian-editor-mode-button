@@ -1,4 +1,4 @@
-import { MarkdownView, Plugin, setIcon } from 'obsidian';
+import { Plugin, setIcon } from 'obsidian';
 import {
 	DEFAULT_SETTINGS,
 	EMBSettingTab,
@@ -12,13 +12,6 @@ import {
 	applyModeToOpenMarkdownViews,
 	setMode,
 } from './editor-mode';
-interface ObsidianCommands {
-	executeCommandById(commandId: string): boolean;
-}
-
-interface AppWithCommands {
-	commands: ObsidianCommands;
-}
 
 export default class EMBPlugin extends Plugin {
 	settings!: EMBSettings;
@@ -41,12 +34,12 @@ export default class EMBPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-			// Watch for changes in obsidian settings.
-			this.registerEvent(
-				this.obsidianSettings.onChange((change) => {
-					this.onObsidianSettingsChange(change);
-				}),
-			);
+		// Watch for changes in obsidian settings.
+		this.registerEvent(
+			this.obsidianSettings.onChange((change) => {
+				this.onObsidianSettingsChange(change);
+			}),
+		);
 		this.obsidianSettings.watch(this);
 
 		// Change default mode when the layout finishes loading.
@@ -95,7 +88,7 @@ export default class EMBPlugin extends Plugin {
 		previous,
 	}: ObsidianSettingsChange): void {
 		if (current.defaultViewMode !== previous.defaultViewMode) {
-			this.modeChanged(current.defaultViewMode as editorMode);
+			void this.modeChanged(current.defaultViewMode as editorMode);
 		}
 	}
 
@@ -117,6 +110,6 @@ export default class EMBPlugin extends Plugin {
 	}
 
 	private async onRibbonIconPress(): Promise<void> {
-		cycleMode(this.obsidianSettings);
+		void cycleMode(this.obsidianSettings);
 	}
 }
