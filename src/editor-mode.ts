@@ -3,6 +3,10 @@ import { ObsidianSettings } from './settings';
 
 export type editorMode = 'preview' | 'source';
 
+export function isEditorMode(value: unknown): value is editorMode {
+	return value === 'preview' || value === 'source';
+}
+
 function nextMode(current: editorMode): editorMode {
 	if (current === 'preview') return 'source';
 	if (current === 'source') return 'preview';

@@ -10,6 +10,7 @@ import {
 	cycleMode,
 	editorMode,
 	applyModeToOpenMarkdownViews,
+	isEditorMode,
 	setMode,
 } from './editor-mode';
 
@@ -61,7 +62,9 @@ export default class EMBPlugin extends Plugin {
 		this.addCommand({
 			id: 'switch-editor-mode-and-reload-files',
 			name: 'Switch editor mode and reload files',
-			callback: () => {},
+			callback: async () => {
+				await cycleMode(this.obsidianSettings);
+			},
 		});
 
 		this.addSettingTab(new EMBSettingTab(this.app, this));
@@ -88,7 +91,11 @@ export default class EMBPlugin extends Plugin {
 		previous,
 	}: ObsidianSettingsChange): void {
 		if (current.defaultViewMode !== previous.defaultViewMode) {
-			void this.modeChanged(current.defaultViewMode as editorMode);
+			if (!isEditorMode(current.defaultViewMode)) {
+				return;
+			}
+
+			void this.modeChanged(current.defaultViewMode);
 		}
 	}
 
