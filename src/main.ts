@@ -110,6 +110,6 @@ export default class EMBPlugin extends Plugin {
 	}
 
 	private async onRibbonIconPress(): Promise<void> {
-		void cycleMode(this.obsidianSettings);
+		await cycleMode(this.obsidianSettings);
 	}
 }
