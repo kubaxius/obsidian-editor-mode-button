@@ -1,11 +1,18 @@
+import { MarkdownView, Plugin, setIcon } from 'obsidian';
 import {
-	Plugin,
-	normalizePath,
-	setIcon,
-} from 'obsidian';
-import { DEFAULT_SETTINGS, EMBSettingTab, EMBSettings } from './settings';
+	DEFAULT_SETTINGS,
+	EMBSettingTab,
+	EMBSettings,
+	ObsidianSettings,
+} from './settings';
+import {
+	applyModeToOpenMarkdownViews,
+	editorMode,
+	nextMode,
+} from './editor-mode';
 
-const TOGGLE_DEFAULT_NEW_TAB_MODE_COMMAND_ID = 'app:toggle-default-new-pane-mode';
+const TOGGLE_DEFAULT_NEW_TAB_MODE_COMMAND_ID =
+	'app:toggle-default-new-pane-mode';
 
 interface ObsidianCommands {
 	executeCommandById(commandId: string): boolean;
@@ -17,40 +24,49 @@ interface AppWithCommands {
 
 export default class EMBPlugin extends Plugin {
 	settings!: EMBSettings;
-	ribbonEl?: HTMLElement;
+	obsidianSettings = new ObsidianSettings(this.app);
+	ribbonButton?: HTMLElement;
 
-	editorMode: EMBSettings['defaultMode'] = DEFAULT_SETTINGS.defaultMode;
+	/* STARTUP AND UNLOAD */
 
 	async onload() {
 		await this.loadSettings();
-		await this.syncEditorModeFromObsidian();
+
+		// Watch for changes in obsidian settings.
+		this.registerEvent(
+			this.obsidianSettings.onChange(({ current, previous }) => {
+				console.log(current.defaultViewMode);
+			}),
+		);
+		this.obsidianSettings.watch(this);
+
+		this.app.workspace.onLayoutReady(() => {
+			void this.setModeFromStartupValue();
+		});
 
 		// This creates an icon in the left ribbon.
-		this.ribbonEl = this.addRibbonIcon(
+		this.ribbonButton = this.addRibbonIcon(
 			'book-open',
 			'Sample',
-			(_evt: MouseEvent) => {
+			async (_evt: MouseEvent) => {
 				// Called when the user clicks the icon.
-				void this.toggleMode();
+				await this.ribbonIconPress();
 			},
 		);
-		this.updateRibbonIcon();
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
 			id: 'switch-editor-mode-and-reload-files',
 			name: 'Switch editor mode and reload files',
-			callback: () => {
-				// TODO: Implementation for switching editor mode and reloading files
-				void this.toggleMode();
-			},
+			callback: () => {},
 		});
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new EMBSettingTab(this.app, this));
 	}
 
 	onunload() {}
+
+	/* SETTINGS */
 
 	async loadSettings() {
 		this.settings = Object.assign(
@@ -64,65 +80,32 @@ export default class EMBPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	async syncEditorModeFromObsidian() {
-		const obsidianDefaultMode = await this.getObsidianDefaultMode();
+	/* RIBBON ICON */
 
-		if (!obsidianDefaultMode) {
-			this.editorMode = this.settings.defaultMode;
+	private updateRibbonIcon(mode: editorMode) {
+		if (!this.ribbonButton) {
 			return;
 		}
 
-		this.editorMode = obsidianDefaultMode;
-		this.settings.defaultMode = obsidianDefaultMode;
-		await this.saveSettings();
+		setIcon(this.ribbonButton, mode === 'source' ? 'pencil' : 'book-open');
 	}
 
-	async toggleMode() {
-		this.getCommands().executeCommandById(TOGGLE_DEFAULT_NEW_TAB_MODE_COMMAND_ID);
+	private async ribbonIconPress(): Promise<void> {
+		let mode: editorMode = this.settings.startupMode;
 
-		this.editorMode = this.editorMode === 'editor' ? 'preview' : 'editor';
-		this.settings.defaultMode = this.editorMode;
-		await this.saveSettings();
-		this.updateRibbonIcon();
+		await this.obsidianSettings.updateJson((settings) => {
+			mode = nextMode(settings.defaultViewMode as editorMode);
+			settings.defaultViewMode = mode;
+		});
+
+		this.updateRibbonIcon(mode);
+		await applyModeToOpenMarkdownViews(mode, this.app);
 	}
 
-	updateRibbonIcon() {
-		if (!this.ribbonEl) {
-			return;
-		}
-
-		setIcon(
-			this.ribbonEl,
-			this.editorMode === 'editor' ? 'pencil' : 'book-open',
-		);
-	}
-
-	async getObsidianDefaultMode(): Promise<EMBSettings['defaultMode'] | null> {
-		const appConfigPath = normalizePath(`${this.app.vault.configDir}/app.json`);
-
-		try {
-			const rawConfig = await this.app.vault.adapter.read(appConfigPath);
-			const appConfig = JSON.parse(rawConfig) as Record<string, unknown>;
-
-			return this.toEditorMode(appConfig.defaultViewMode);
-		} catch {
-			return null;
-		}
-	}
-
-	toEditorMode(value: unknown): EMBSettings['defaultMode'] | null {
-		if (value === 'source' || value === 'editor') {
-			return 'editor';
-		}
-
-		if (value === 'preview') {
-			return 'preview';
-		}
-
-		return null;
-	}
-
-	getCommands(): ObsidianCommands {
-		return (this.app as typeof this.app & AppWithCommands).commands;
+	private async setModeFromStartupValue(): Promise<void> {
+		await this.obsidianSettings.updateJson((settings) => {
+			settings.defaultViewMode = this.settings.startupMode;
+		});
+		await applyModeToOpenMarkdownViews(this.settings.startupMode, this.app);
 	}
 }
