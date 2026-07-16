@@ -12,10 +12,12 @@ import { editorMode } from './editor-mode';
 
 export interface EMBSettings {
 	startupMode: editorMode;
+	customCssPath: string;
 }
 
 export const DEFAULT_SETTINGS: EMBSettings = {
 	startupMode: 'source',
+	customCssPath: '',
 };
 
 export const OBSIDIAN_SETTINGS_CHANGE_EVENT = 'change';
@@ -53,6 +55,15 @@ export class EMBSettingTab extends PluginSettingTab {
 					options: { preview: 'Preview', source: 'Source' },
 				},
 			},
+			{
+				name: 'Custom CSS file',
+				desc: 'Use a vault-relative CSS file instead of the default styles',
+				control: {
+					type: 'text',
+					key: 'customCssPath',
+					defaultValue: '',
+				},
+			},
 		];
 	}
 
@@ -75,6 +86,26 @@ export class EMBSettingTab extends PluginSettingTab {
 						this.plugin.settings.startupMode = value as editorMode;
 						await this.plugin.saveSettings();
 					}),
+				);
+
+		new Setting(containerEl)
+			.setName('Custom CSS file')
+			.setDesc(
+				'Use a vault-relative CSS file instead of the default styles.',
+			)
+			.addText((text) =>
+				text
+					.setPlaceholder('styles/editor-mode.css')
+					.setValue(this.plugin.settings.customCssPath)
+					.onChange(async (value) => {
+						this.plugin.settings.customCssPath = value.trim();
+						await this.plugin.saveSettings();
+					}),
+			)
+			.addButton((button) =>
+				button.setButtonText('Apply').onClick(async () => {
+					await this.plugin.loadCustomCss(true);
+				}),
 			);
 	}
 }

@@ -1,7 +1,7 @@
-body.emb-mode-source .view-header {
+body.emb-use-default-styles.emb-mode-source .view-header {
 	background-color: rgb(45, 25, 0) !important;
 }
 
-body.emb-mode-preview .view-header {
+body.emb-use-default-styles.emb-mode-preview .view-header {
 	background-color: var(--background-secondary);
 }
