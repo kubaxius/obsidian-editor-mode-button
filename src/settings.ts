@@ -114,12 +114,20 @@ export class ObsidianSettings extends Events {
 		} satisfies ObsidianSettingsChange);
 	}
 
+	private handleChangeCheckError(error: unknown): void {
+		console.error('Failed to check Obsidian settings for changes', error);
+	}
+
 	watch(component: Component, intervalMs = 1500): void {
-		void this.checkForChanges();
+		void this.checkForChanges().catch((error) => {
+			this.handleChangeCheckError(error);
+		});
 
 		component.registerInterval(
 			window.setInterval(() => {
-				void this.checkForChanges();
+				void this.checkForChanges().catch((error) => {
+					this.handleChangeCheckError(error);
+				});
 			}, intervalMs),
 		);
 	}
