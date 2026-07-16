@@ -51,7 +51,7 @@ export default class EMBPlugin extends Plugin {
 		// This creates an icon in the left ribbon.
 		this.ribbonButton = this.addRibbonIcon(
 			'book-open',
-			'Sample',
+			'Change editor mode',
 			async (_evt: MouseEvent) => {
 				// Called when the user clicks the icon.
 				await this.onRibbonIconPress();
