@@ -98,11 +98,11 @@ export class ObsidianSettings extends Events {
 			return;
 		}
 
-		this.lastMtime = stat?.mtime ?? null;
-
 		const previous = this.lastJson;
 		const current = await this.getJson();
 		this.lastJson = current;
+
+		this.lastMtime = stat?.mtime ?? null;
 
 		if (!previous) {
 			return;
