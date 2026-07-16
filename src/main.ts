@@ -4,16 +4,14 @@ import {
 	EMBSettingTab,
 	EMBSettings,
 	ObsidianSettings,
+	ObsidianSettingsChange,
 } from './settings';
 import {
-	applyModeToOpenMarkdownViews,
+	cycleMode,
 	editorMode,
-	nextMode,
+	applyModeToOpenMarkdownViews,
+	setMode,
 } from './editor-mode';
-
-const TOGGLE_DEFAULT_NEW_TAB_MODE_COMMAND_ID =
-	'app:toggle-default-new-pane-mode';
-
 interface ObsidianCommands {
 	executeCommandById(commandId: string): boolean;
 }
@@ -27,6 +25,17 @@ export default class EMBPlugin extends Plugin {
 	obsidianSettings = new ObsidianSettings(this.app);
 	ribbonButton?: HTMLElement;
 
+	mode!: editorMode;
+
+	/* MAIN LOGIC */
+
+	// This function is ran every time the mode setting changes in the obsidian settings.
+	private async modeChanged(mode: editorMode) {
+		this.mode = mode;
+		this.updateRibbonIcon();
+		await applyModeToOpenMarkdownViews(this.mode, this.app);
+	}
+
 	/* STARTUP AND UNLOAD */
 
 	async onload() {
@@ -34,12 +43,11 @@ export default class EMBPlugin extends Plugin {
 
 		// Watch for changes in obsidian settings.
 		this.registerEvent(
-			this.obsidianSettings.onChange(({ current, previous }) => {
-				console.log(current.defaultViewMode);
-			}),
+			this.obsidianSettings.onChange(this.onObsidianSettingsChange),
 		);
 		this.obsidianSettings.watch(this);
 
+		// Change default mode when the layout finishes loading.
 		this.app.workspace.onLayoutReady(() => {
 			void this.setModeFromStartupValue();
 		});
@@ -50,7 +58,7 @@ export default class EMBPlugin extends Plugin {
 			'Sample',
 			async (_evt: MouseEvent) => {
 				// Called when the user clicks the icon.
-				await this.ribbonIconPress();
+				await this.onRibbonIconPress();
 			},
 		);
 
@@ -80,32 +88,33 @@ export default class EMBPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
+	private onObsidianSettingsChange({
+		current,
+		previous,
+	}: ObsidianSettingsChange): void {
+		if (current.defaultViewMode !== previous.defaultViewMode) {
+			this.modeChanged(current.defaultViewMode as editorMode);
+		}
+	}
+
+	private async setModeFromStartupValue(): Promise<void> {
+		await setMode(this.obsidianSettings, this.settings.startupMode);
+	}
+
 	/* RIBBON ICON */
 
-	private updateRibbonIcon(mode: editorMode) {
+	private updateRibbonIcon() {
 		if (!this.ribbonButton) {
 			return;
 		}
 
-		setIcon(this.ribbonButton, mode === 'source' ? 'pencil' : 'book-open');
+		setIcon(
+			this.ribbonButton,
+			this.mode === 'source' ? 'pencil' : 'book-open',
+		);
 	}
 
-	private async ribbonIconPress(): Promise<void> {
-		let mode: editorMode = this.settings.startupMode;
-
-		await this.obsidianSettings.updateJson((settings) => {
-			mode = nextMode(settings.defaultViewMode as editorMode);
-			settings.defaultViewMode = mode;
-		});
-
-		this.updateRibbonIcon(mode);
-		await applyModeToOpenMarkdownViews(mode, this.app);
-	}
-
-	private async setModeFromStartupValue(): Promise<void> {
-		await this.obsidianSettings.updateJson((settings) => {
-			settings.defaultViewMode = this.settings.startupMode;
-		});
-		await applyModeToOpenMarkdownViews(this.settings.startupMode, this.app);
+	private async onRibbonIconPress(): Promise<void> {
+		cycleMode(this.obsidianSettings);
 	}
 }

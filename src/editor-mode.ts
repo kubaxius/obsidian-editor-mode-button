@@ -1,12 +1,29 @@
-import { App, MarkdownView, normalizePath } from 'obsidian';
+import { App, MarkdownView } from 'obsidian';
+import { ObsidianSettings } from './settings';
 
 export type editorMode = 'preview' | 'source';
 
-export function nextMode(current: editorMode): editorMode {
+function nextMode(current: editorMode): editorMode {
 	if (current === 'preview') return 'source';
 	if (current === 'source') return 'preview';
 
 	return 'source';
+}
+
+export async function setMode(
+	obsidianSettings: ObsidianSettings,
+	mode: editorMode,
+) {
+	await obsidianSettings.updateJson((settings) => {
+		settings.defaultViewMode = mode;
+	});
+}
+
+export async function cycleMode(obsidianSettings: ObsidianSettings) {
+	await obsidianSettings.updateJson((settings) => {
+		const mode = nextMode(settings.defaultViewMode as editorMode);
+		settings.defaultViewMode = mode;
+	});
 }
 
 export async function applyModeToOpenMarkdownViews(

@@ -24,7 +24,7 @@ export type ObsidianSettingsJson = Record<string, unknown>;
 
 export interface ObsidianSettingsChange {
 	current: ObsidianSettingsJson;
-	previous: ObsidianSettingsJson | null;
+	previous: ObsidianSettingsJson;
 }
 
 export type ObsidianSettingsChangeHandler = (
