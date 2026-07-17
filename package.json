@@ -1,6 +1,6 @@
 {
 	"name": "editor-mode-button",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Adds a button to toggle Obsidian's global editor mode.",
 	"main": "main.js",
 	"type": "module",
