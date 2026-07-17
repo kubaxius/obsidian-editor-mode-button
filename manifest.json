@@ -5,5 +5,7 @@
 	"minAppVersion": "1.7.2",
 	"description": "Adds a button to toggle global editor mode.",
 	"author": "Kubaxius",
+	"authorUrl": "https://bearworks.pl",
+	"fundingUrl": "https://buymeacoffee.com/kubaxius",
 	"isDesktopOnly": false
 }
