@@ -47,7 +47,7 @@ export class EMBSettingTab extends PluginSettingTab {
 		return [
 			{
 				name: 'Editor mode on startup',
-				desc: 'Set the default editor mode that is set on Obsidian Startup',
+				desc: 'Set the default editor mode that is set on Obsidian startup',
 				control: {
 					type: 'dropdown',
 					key: 'startupMode',

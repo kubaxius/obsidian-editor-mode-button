@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "editor-mode-button",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Adds a button to toggle Obsidian's global editor mode.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {

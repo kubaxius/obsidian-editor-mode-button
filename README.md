@@ -1,6 +1,6 @@
 # Editor Mode Button
 
-I made this extension because Obsidian only has a "Default editing mode for new notes" setting, and that never felt like enough to me. I wanted notes to work more like Vim modes or a blog editor: one clear mode for reading, and one clear mode for editing.
+I made this plugin because Obsidian only has a "Default editing mode for new notes" setting, and that never felt like enough to me. I wanted notes to work more like Vim modes or a blog editor: one clear mode for reading, and one clear mode for editing.
 
 It makes the separation between editing mode and reading mode clear. When you switch `Default view for new tabs`, it applies not only to newly opened files, but also to the ones that are already open.
 
@@ -20,23 +20,23 @@ body.emb-mode-preview .view-header {
 
 All styles that should be visible in a specific mode should be placed either in the `body.emb-mode-source` selector (for editing mode), or in `body.emb-mode-preview` (for reading mode). The custom CSS will override the default styles.
 
-### Default Reading Mode
+### Default reading mode
 
 ![Reading Mode Top Bar](screenshots/reading_mode.png)
 
-### Default Editing Mode
+### Default editing mode
 
 ![Editing Mode Top Bar](screenshots/editing_mode.png)
 
-## Ribbon Indicator
+## Ribbon indicator
 
-There's an indicator on the ribbon (menu on the right) that shows which mode you are in. You can click it to quickly switch modes, and when you do, all open files will change their mode too.
+There's an indicator on the ribbon that shows which mode you are in. You can click it to quickly switch modes, and when you do, all open files will change their mode too.
 
 ![Mode Indicator](screenshots/mode_indicator.png)
 
 ## Commands
 
-`Toggle default mode for new tabs` is already a command, but due to the limitations of Obsidian Api it can take a second to register new CSS when using it. To circumvent this, this extension includes a new command:
+`Toggle default mode for new tabs` is already a command, but due to the limitations of the Obsidian API it can take a second to register new CSS when using it. To avoid that delay, this plugin includes a new command:
 
 `Editor Mode Button: Switch editor mode and reload files`.
 
