@@ -1,8 +1,8 @@
 # Editor Mode Button
 
-I made this extension because I was tired of the weird flow of editing and viewing Obsidian notes, where you could be editing one note and reading another, and you were never fully sure which mode new pages would open in.
+I made this extension because Obsidian only has a "Default editing mode for new notes" setting, and that never felt like enough to me. I wanted notes to work more like Vim modes or a blog editor: one clear mode for reading, and one clear mode for editing.
 
-Now, there's a clear separation between editing mode and reading mode.
+It makes the separation between editing mode and reading mode clear. When you switch `Default view for new tabs`, it applies not only to newly opened files, but also to the ones that are already open.
 
 ## CSS
 
@@ -33,3 +33,11 @@ All styles that should be visible in a specific mode should be placed either in 
 There's an indicator on the ribbon (menu on the right) that shows which mode you are in. You can click it to quickly switch modes, and when you do, all open files will change their mode too.
 
 ![Mode Indicator](screenshots/mode_indicator.png)
+
+## Commands
+
+`Toggle default mode for new tabs` is already a command, but due to the limitations of Obsidian Api it can take a second to register new CSS when using it. To circumvent this, this extension includes a new command:
+
+`Editor Mode Button: Switch editor mode and reload files`.
+
+You can add a keyboard shortcut for it if you feel like it, in the `Hotkeys` category in the Obsidian settings.
