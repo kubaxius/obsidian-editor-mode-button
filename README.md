@@ -9,12 +9,14 @@ It makes the separation between editing mode and reading mode clear. When you sw
 You can easily change how Obsidian looks in both modes. Just create a CSS file in your vault, and set its path in the settings.
 
 ```css
-body.emb-mode-source .view-header {
-	background-color: rgb(45, 25, 0) !important;
+body.emb-use-default-styles.emb-mode-source .view-header {
+	--file-header-background-focused: rgb(45, 25, 0);
+	--file-header-background: rgb(25, 0, 0);
 }
 
-body.emb-mode-preview .view-header {
-	background-color: var(--background-secondary);
+body.emb-use-default-styles.emb-mode-preview .view-header {
+	--file-header-background-focused: rgb(25, 25, 25);
+	--file-header-background: rgb(0, 0, 0);
 }
 ```
 

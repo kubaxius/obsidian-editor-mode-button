@@ -1,7 +1,9 @@
 body.emb-use-default-styles.emb-mode-source .view-header {
-	background-color: rgb(45, 25, 0) !important;
+	--file-header-background-focused: rgb(45, 25, 0);
+	--file-header-background: rgb(25, 0, 0);
 }
 
 body.emb-use-default-styles.emb-mode-preview .view-header {
-	background-color: var(--background-secondary);
+	--file-header-background-focused: rgb(25, 25, 25);
+	--file-header-background: rgb(0, 0, 0);
 }
