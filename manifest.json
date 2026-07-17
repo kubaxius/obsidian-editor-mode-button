@@ -1,7 +1,7 @@
 {
 	"id": "editor-mode-button",
 	"name": "Editor Mode Button",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.7.2",
 	"description": "Adds a button to toggle global editor mode.",
 	"author": "Kubaxius",
